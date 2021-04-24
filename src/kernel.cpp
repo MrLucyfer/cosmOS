@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "GDT.h"
+#include "Interrupts.h"
+
 enum vga_color {
     VGA_COLOR_BLACK = 0,
     VGA_COLOR_BLUE = 1,
@@ -98,6 +101,7 @@ void terminalWrite(const char* data, size_t size) {
 
 void printf(const char* data) {
     terminalWrite(data, strlen(data));
+
 }
 
 extern "C" void kernelMain(void* multiboot_struct, unsigned int magicNumber) {
@@ -105,5 +109,11 @@ extern "C" void kernelMain(void* multiboot_struct, unsigned int magicNumber) {
     terminal_setColor(vga_entry_color(vga_color::VGA_COLOR_LIGHT_CYAN, vga_color::VGA_COLOR_BLACK));
     printf("Welcome to cosmOS\n");
     printf("WIP");
+
+    Kernel::GDT gdt;
+    Kernel::InterruptManager interrupts(&gdt);
+
+    interrupts.Activate();
+
     while(1);
 }
