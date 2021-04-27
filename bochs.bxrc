@@ -1,0 +1,2 @@
+floppya: 1_44= ./mykernel.bin, status=inserted
+boot: floppy

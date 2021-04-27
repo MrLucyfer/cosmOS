@@ -67,6 +67,7 @@ int_bottom:
     pushl %fs
     pushl %gs
 
+    # ring 0 s
     #cld
     #mov $0x10, %eax
     #mov %eax, %eds
@@ -78,7 +79,6 @@ int_bottom:
     add %esp, 6
     mov %eax, %esp
 
-    # register laden
     pop %gs
     pop %fs
     pop %es
