@@ -2,7 +2,7 @@
 // Created by MrMischief on 23/04/2021.
 //
 
-#include "types.h"
+#include "../AK/types.h"
 
 #include "GDT.h"
 #include "Interrupts.h"
