@@ -2,9 +2,7 @@
 // Created by MrMischief on 23/04/2021.
 //
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "types.h"
 
 #include "GDT.h"
 #include "Interrupts.h"
@@ -101,7 +99,6 @@ void terminalWrite(const char* data, size_t size) {
 
 void printf(const char* data) {
     terminalWrite(data, strlen(data));
-
 }
 
 extern "C" void kernelMain(void* multiboot_struct, unsigned int magicNumber) {
@@ -111,7 +108,7 @@ extern "C" void kernelMain(void* multiboot_struct, unsigned int magicNumber) {
     printf("WIP");
 
     Kernel::GDT gdt;
-    Kernel::InterruptManager interrupts(&gdt);
+    InterruptManager interrupts(0x20, &gdt);
 
     interrupts.Activate();
 
