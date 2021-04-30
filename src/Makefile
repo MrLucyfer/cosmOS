@@ -1,6 +1,6 @@
 KERNEL := kernel.elf
 
-CC = cc
+CC = gcc
 
 CFLAGS = -Wall -Wextra -O2 -pipe
 
@@ -13,15 +13,14 @@ LDINTERNALFLAGS := \
 
 INTERNALCFLAGS  :=       \
 	-I.                  \
-	-std=gnu11           \
 	-ffreestanding       \
 	-fno-stack-protector \
 	-fno-pic -fpie       \
 	-mgeneral-regs-only  \
 	-mno-red-zone
 
-CFILES := $(shell find ./ -type f -name '*.c')
-OBJ    := $(CFILES:.c=.o)
+CFILES := $(shell find ./ -type f -name '*.cpp')
+OBJ    := $(CFILES:.cpp=.o)
 
 .PHONY: all clean
 
@@ -30,7 +29,7 @@ all: $(KERNEL)
 $(KERNEL): $(OBJ)
 	$(CC) $(LDINTERNALFLAGS) $(OBJ) -o $@
 
-%.o: %.c
+%.o: %.cpp
 	$(CC) $(CFLAGS) $(INTERNALCFLAGS) -c $< -o $@
 
 clean:
