@@ -1,1 +1,4 @@
 .idea
+disk.hdd
+src/*.elf
+src/*.o
