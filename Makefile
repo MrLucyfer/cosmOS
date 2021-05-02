@@ -1,30 +1,24 @@
+KERNEL_HDD = disk.hdd
 
-# sudo apt-get install g++ binutils libc6-dev-i386
-# sudo apt-get install VirtualBox grub-legacy xorriso
-GCCPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore -Wno-write-strings -c -o
-ASPARAMS = --32
-LDPARAMS = -melf_i386
+.PHONY: clean all run
 
-ASSEMBLER = /usr/local/Cellar/x86_64-elf-binutils/2.36.1/bin/x86_64-elf-as 
-CC = /usr/local/Cellar/x86_64-elf-gcc/10.3.0/bin/x86_64-elf-gcc
-LD = /usr/local/Cellar/x86_64-elf-binutils/2.36.1/bin/x86_64-elf-ld
-
-objects = src/kernel.o src/loader.o src/GDT.o src/Interrupts.o src/Port.o src/interruptstubs.o
+all: $(KERNEL_HDD)
 
 
-%.o: %.cpp
-	mkdir -p $(@D)
-	$(CC) $(GCCPARAMS) $@ $<
-%.o: %.s
-	mkdir -p $(@D)
-	$(ASSEMBLER) $(ASPARAMS) -o $@ $<
+src/kernel.elf:
+	$(MAKE) -C src
 
-mykernel.bin: linker.ld $(objects)
-	$(LD)	$(LDPARAMS) -T $< -o $@ $(objects)
+$(KERNEL_HDD): limine src/kernel.elf
+	rm -f $(KERNEL_HDD)
+	dd if=/dev/zero bs=1M count=0 seek=64 of=$(KERNEL_HDD)
+	parted -s $(KERNEL_HDD) mklabel gpt
+	parted -s $(KERNEL_HDD) mkpart primary 2048s 100%
+	echfs-utils -g -p0 $(KERNEL_HDD) quick-format 512
+	echfs-utils -g -p0 $(KERNEL_HDD) import src/kernel.elf kernel.elf
+	echfs-utils -g -p0 $(KERNEL_HDD) import limine.cfg limine.cfg
+	echfs-utils -g -p0 $(KERNEL_HDD) import limine/limine.sys limine.sys
+	./limine/limine-install $(KERNEL_HDD)
 
-install: mykernel.bin
-	sudo cp $< /boot/mykernel.bin
-
-.PHONY: clean
 clean:
-	rm src/*.o
+	rm -f $(KERNEL_HDD)
+	$(MAKE) -C src clean
