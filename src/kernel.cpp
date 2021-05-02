@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <stddef.h>
 #include "stivale2.h"
+#include "Gfx/Framebuffer.h"
+#include "Gfx/Color.h"
 
 //Creating a stack for the bootloader
 static uint8_t stack[4096];
@@ -67,13 +69,9 @@ extern "C" void _start(struct stivale2_struct *stivale2_struct) {
         }
     }
 
-    uint8_t *fb_addr = (uint8_t *)framebuffer_str->framebuffer_addr;
+    Gfx::Framebuffer screen(framebuffer_str);
 
-    // Let's try to paint a few pixels white in the top left, so we know
-    // that we booted correctly.
-    for (size_t i = 0; i < 128; i++) {
-        fb_addr[i] = 0xff;
-    }
+    screen.ClearScreen({r = 0, g = 0, b = 0xff});
 
     for(;;) {
         asm("hlt");
