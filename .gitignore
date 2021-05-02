@@ -1,4 +1,4 @@
 .idea
 disk.hdd
-src/*.elf
-src/*.o
+src/*/*.elf
+src/*/*.o
