@@ -18,14 +18,15 @@ public:
 
     void ClearScreen(Color col);
 
-private:
     void putPixel(int x, int y, Color col);
+private:
 
 private:
     uint8_t* m_address;
     uint16_t m_width;
     uint16_t m_height;
     uint16_t m_bpp;
+    uint16_t m_pitch;
 };
 }
 
