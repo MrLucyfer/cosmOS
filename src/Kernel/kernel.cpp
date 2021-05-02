@@ -4,10 +4,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "stivale2.h"
-#include "Gfx/Framebuffer.h"
-#include "Gfx/Color.h"
-#include "Terminal.h"
+#include "../stivale2.h"
+#include "../Gfx/Framebuffer.h"
+#include "../Gfx/Color.h"
+#include "../Gfx/Terminal.h"
 
 //Creating a stack for the bootloader
 static uint8_t stack[4096];
@@ -71,8 +71,10 @@ extern "C" void _start(struct stivale2_struct *stivale2_struct) {
     }
 
     Gfx::Framebuffer screen(framebuffer_str);
-    screen.ClearScreen({.r = 0, .g = 0, .b = 0xff});
+    screen.ClearScreen({.r = 0, .g = 0, .b = 0});
+    Terminal term(&screen);
 
+    term.Write("Welcome to Cosmos!\n");
 
     for(;;) {
         asm("hlt");
