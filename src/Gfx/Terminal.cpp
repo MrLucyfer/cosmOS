@@ -3,11 +3,15 @@
 //
 
 #include "Terminal.h"
-#include "Glyphs.h"
-extern char _binary_font_psf_start;
 
-Terminal::Terminal(Gfx::Framebuffer *framebuffer)
-{
+Terminal::Terminal(){}
+
+Terminal& Terminal::the() {
+    static Terminal instance;
+    return instance;
+}
+
+void Terminal::SetFramebuffer(Gfx::Framebuffer *framebuffer) {
     m_framebuffer = framebuffer;
 }
 
@@ -31,18 +35,21 @@ void Terminal::writeChar(char letter) {
 
 void Terminal::Write(const char *string) {
     while(*string) {
-        if(*string == "\n") {
+        if(*string == '\n') {
             m_cursorY += FONT_HEIGHT2;
             m_cursorX = 0;
         } else {
             writeChar(*string);
+            m_cursorX += FONT_WIDTH2;
         }
         ++string;
-        if(m_cursorX < m_width) {
-            m_cursorX += FONT_WIDTH2;
-            if(m_cursorY < m_height) {
-                m_cursorY = 0;
-            }
-        }
     }
+}
+
+void Terminal::SetForegroundColor(Gfx::Color color) {
+    m_fg = color;
+}
+
+void Terminal::SetBackgroundColor(Gfx::Color color) {
+    m_bg = color;
 }
