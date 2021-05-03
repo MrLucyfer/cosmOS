@@ -8,6 +8,7 @@
 #include "../Gfx/Framebuffer.h"
 #include "../Gfx/Color.h"
 #include "../Gfx/Terminal.h"
+#include "GDT.h"
 
 //Creating a stack for the bootloader
 static uint8_t stack[4096];
@@ -72,9 +73,24 @@ extern "C" void _start(struct stivale2_struct *stivale2_struct) {
 
     Gfx::Framebuffer screen(framebuffer_str);
     screen.ClearScreen({.r = 0, .g = 0, .b = 0});
-    Terminal term(&screen);
+    Terminal::the().SetFramebuffer(&screen);
 
-    term.Write("Welcome to Cosmos!\n");
+    Terminal::the().Write("Welcome to cosm");
+    Terminal::the().SetForegroundColor({.r = 0x40, .g = 0xE0, .b = 0xD0});
+    Terminal::the().Write("OS");
+    Terminal::the().SetForegroundColor({.r = 0xff, .g=0xff, .b=0xff});
+    Terminal::the().Write("!\n");
+
+    //Initing the gdt
+    Kernel::GDT gdt;
+    //Adding the entries for a 64bit GDT
+    gdt.AddEntry(0,0,0,0,0x00, 0);
+    gdt.AddEntry(0,0,0,0x9A, 0x20, 0);
+    gdt.AddEntry(0,0,0,0x92, 0x00, 0);
+    gdt.AddEntry(0,0,0,0, 0x00,0);
+
+
+    gdt.LoadGDT();
 
     for(;;) {
         asm("hlt");
