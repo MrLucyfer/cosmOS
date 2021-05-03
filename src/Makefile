@@ -4,7 +4,7 @@ CXX = g++
 LD = ld
 
 CXXFLAGS = -Wall -Wextra -O2 -pipe -std=c++20  -mno-red-zone\
-           -fno-rtti -fno-exceptions -ffreestanding -fpermissive -fno-stack-protector \
+           -fno-rtti -fno-exceptions -ffreestanding -fno-threadsafe-statics -fpermissive -fno-stack-protector \
            -fno-omit-frame-pointer -l -I.
 
 LDFLAGS = -nostdlib -nostartfiles -z max-page-size=0x1000 -T linker.ld
